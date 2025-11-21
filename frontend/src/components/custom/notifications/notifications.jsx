@@ -30,6 +30,7 @@ export function useNotificationActions() {
         }
       ),
     onSuccess: (_data, variables) => {
+      // `variables` is what you passed into mutate
       toast(`You are now friends with: ${variables.info}`);
       queryClient.invalidateQueries(["notifications"]);
       queryClient.invalidateQueries(["friends"]);
@@ -96,7 +97,7 @@ export function Notifcations({ children }) {
   } = useQuery({
     queryKey: ["notifications"],
     queryFn: fetchNotifications,
-    refetchInterval: 15000,
+    refetchInterval: 10000,
   });
 
   const typeMap = useNotificationActions();

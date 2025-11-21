@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from 'react-router-dom';
+import { SettingsWrapper } from "../settings/settingsWrapper";
 
 export function NavUser({ user }) {
   const { isMobile } = useSidebar();
@@ -73,12 +74,10 @@ export function NavUser({ user }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+
+
+            <SettingsWrapper/>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut />

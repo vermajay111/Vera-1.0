@@ -105,7 +105,7 @@ const guest = {
 
 // -------- MAIN SIDEBAR COMPONENT --------
 export function AppSidebar(props) {
-  const username = useSelector((state) => state.user.value);
+  const username = useSelector((state) => state.user.username);
   const token = useSelector((state) => state.token.refresh);
 
   const user_info = {
@@ -113,6 +113,8 @@ export function AppSidebar(props) {
     email: username ? `Welcome back, ${username}` : "",
     avatar: "/avatars/shadcn.jpg",
   };
+  
+  console.log(user_info)
 
   const data = username && token ? auth_buttons : guest;
 
