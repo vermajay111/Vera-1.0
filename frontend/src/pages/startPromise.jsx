@@ -39,7 +39,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
-
 export function CreatePromise() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -50,7 +49,7 @@ export function CreatePromise() {
   const [stake, setStake] = useState("");
   const [majorityVote, setMajorityVote] = useState(true);
   const navigate = useNavigate();
-  
+
   const { data: friends = [], isLoading } = useFriendsSearch(search);
   const tokenCount = useSelector((state) => state.user.tokenCount);
   const toggleFriend = (id) => {
@@ -68,8 +67,8 @@ export function CreatePromise() {
       return response.data;
     },
     onSuccess: (data) => {
-      navigate('/home');
-      toast("Promise has been created! Now keep Your Word!")
+      navigate("/home");
+      toast("Promise has been created! Now keep Your Word!");
       console.log("Promise created:", data);
     },
     onError: (error) => {
@@ -186,7 +185,7 @@ export function CreatePromise() {
                     Loading friends...
                   </p>
                 )}
-                {(!isLoading & friends.length > 0) ?
+                {!isLoading & (friends.length > 0) ? (
                   friends.map((f) => (
                     <div
                       key={f.id}
@@ -215,7 +214,10 @@ export function CreatePromise() {
                         className="accent-purple-500 w-4 h-4"
                       />
                     </div>
-                  )) : <p className="text-sm text-gray-500  ">No Friends Found!</p>}
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500  ">No Friends Found!</p>
+                )}
               </div>
 
               {selectedFriends.length > 0 && (
