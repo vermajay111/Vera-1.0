@@ -40,13 +40,13 @@ def search_for_friends(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def send_friend_request(request):
-    recipient_username = request.data.get('username', '').strip()
-
-    if not recipient_username:
-        return Response({"error": "No recipient username provided"}, status=400)
+    recipient_id = request.data.get('id', '')
+    print(recipient_id)
+    if not recipient_id:
+        return Response({"error": "No recipient id provided"}, status=400)
 
     try:
-        recipient = CustomUser.objects.get(username=recipient_username)
+        recipient = CustomUser.objects.get(id=recipient_id)
     except CustomUser.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
 

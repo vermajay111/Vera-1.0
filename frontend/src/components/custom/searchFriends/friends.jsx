@@ -16,10 +16,12 @@ import { Separator } from "@/components/ui/separator";
 import { axiosInstance } from "@/utils/TokenRefresh";
 import { motion } from "framer-motion";
 import * as React from "react";
-import { UserPlus, Eye } from "lucide-react";
+import { UserPlus, Eye, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Debounce hook
 function useDebounce(value, delay = 250) {
@@ -35,12 +37,11 @@ function useDebounce(value, delay = 250) {
 
 export function SearchForFriends({ children }) {
   const navigate = useNavigate();
+  const queryclient = useQueryClient();
   const [query, setQuery] = React.useState("");
   const debouncedQuery = useDebounce(query);
-
   const friendsEndpoint = "http://127.0.0.1:8000/users/search_for_friends";
 
-  // Query function
   const fetchFriends = async () => {
     const response = await axiosInstance.get(friendsEndpoint, {
       params: { username: debouncedQuery },
@@ -55,17 +56,38 @@ export function SearchForFriends({ children }) {
   } = useQuery({
     queryKey: ["search-friends", debouncedQuery],
     queryFn: fetchFriends,
-    enabled: debouncedQuery.trim() !== "", // only run when query has text
+    enabled: debouncedQuery.trim() !== "",
     staleTime: 1000 * 10,
   });
 
-  const handleAddFriend = (id) => {
-    console.log("Send friend request to:", id);
+  const sendFriendRequest = useMutation({
+    mutationFn: async (user) => {
+      const response = await axiosInstance.post("http://127.0.0.1:8000/users/send_friend_request", {"id": user.id});
+      return response.data
+    },
+    onSuccess : (data, variables) => {
+      queryclient.invalidateQueries(["search-friends"])
+      toast(`Friend request sent to: ${variables.username}`)
+    },
+    onError : (error) => {
+      console.log(error)
+      toast("Error sending friend request")
+    }
+  })
+
+  const handleAddFriend = (user) => {
+    const payload = {
+      "id": user.id,
+      "username": user.username
+    }
+    console.log(payload)
+    sendFriendRequest.mutate(payload)
   };
 
   const handleViewProfile = (id) => {
     navigate(`/user_profile_page/${id}`);
   };
+
 
   return (
     <Sheet>
@@ -106,7 +128,7 @@ export function SearchForFriends({ children }) {
               {/* Loading State */}
               {isLoading && debouncedQuery !== "" && (
                 <div className="text-sm text-gray-500 text-center py-6">
-                  Loading... <Spinner/>
+                  Loading... <Spinner />
                 </div>
               )}
 
@@ -159,14 +181,23 @@ export function SearchForFriends({ children }) {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
+                    {!user.friend_request_sent ? 
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="text-purple-400 hover:text-purple-300 hover:bg-purple-900/20"
-                      onClick={() => handleAddFriend(user.id)}
+                      className="text-purple-600 hover:text-white hover:bg-purple-600 transition-transform duration-200 rounded-full p-2 shadow-sm transform hover:scale-110"
+                      onClick={() => handleAddFriend(user)}
                     >
-                      <UserPlus className="h-4 w-4" />
+                      <UserPlus className="h-5 w-5" />
                     </Button>
+                   : 
+                    <Button
+                      disabled
+                      className="text-white bg-purple-600 opacity-50 cursor-not-allowed rounded-full p-2 shadow-sm"
+                    >
+                      <Check className="h-5 w-5" />
+                    </Button>}
+                    
                   </div>
                 </motion.div>
               ))}

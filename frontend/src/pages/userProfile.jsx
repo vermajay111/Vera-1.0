@@ -50,7 +50,10 @@ export default function UserProfilePage() {
       </div>
     );
 
+  
   const user = data.user;
+  
+  console.log(user)
 
   return (
     <SidebarProvider>
@@ -146,11 +149,11 @@ export default function UserProfilePage() {
 
             {/* ACTION BUTTON */}
             <div className="flex justify-center mt-12">
-              {!(userId == id) && (
+              {(!(userId == id) & user.friend_request_send == false) ? (
                 <Button className="bg-purple-600 hover:bg-purple-500 text-white py-3 px-10 rounded-2xl shadow-lg text-lg transition-all duration-300">
                   Add Friend
                 </Button>
-              )}
+              ): <Button disabled className="bg-purple-600 hover:bg-purple-500 text-white py-3 px-10 rounded-2xl shadow-lg text-lg transition-all duration-300">Friend Request Sent</Button>}
             </div>
           </Card>
         </motion.div>

@@ -87,11 +87,6 @@ export function CreatePromise() {
       return;
     }
 
-    if (selectedDateTime < fiveMinutesFromNow) {
-      alert("Resolution time must be at least 5 minutes from now.");
-      return;
-    }
-
     const payload = {
       title: title,
       receiver_ids: selectedFriends,

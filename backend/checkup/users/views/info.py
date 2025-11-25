@@ -26,6 +26,14 @@ def user_profile_info(request):
 
     account_created = user.date_joined.strftime("%Y-%m")
     
+    sent_request = Notification.objects.get(
+        sender=request.user,
+        user=user,
+        message__icontains="friend request",
+    )
+
+    
+    
     info = {
         "username": user.username,
         "first_name": user.first_name,
@@ -37,7 +45,7 @@ def user_profile_info(request):
         "promises_failed": failed_promises,
         "reliability_score": reliability_score,
         "account_created": account_created,
-        
+        "friend_request_sent": bool(sent_request)
     }
 
     return Response({"user": info})
